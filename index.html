@@ -1,0 +1,61 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Real-time Chat</title>
+</head>
+<body>
+  <ul id="userNames"></ul>
+  <ul id="messages"></ul>
+  <form id="form" action="">
+    <input id="m" autocomplete="off" /><button>Send</button>
+  </form>
+  
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+  <script>
+
+   document.addEventListener('DOMContentLoaded', function () {
+   const socket = io();
+
+   const userName = prompt('Please type your name:')
+   if(!userName) return;
+
+   socket.emit('setUsername', userName);
+
+  
+   
+    socket.on('chat message', function (message) {
+    const li = document.createElement('li');
+    li.textContent = message;
+    document.getElementById('messages').appendChild(li);
+   }); 
+   
+   socket.on('setUsername', function (userName) {
+    const li = document.createElement('li');
+    li.textContent = userName;
+    document.getElementById('userNames').appendChild(li);
+   });
+
+   document.querySelector('form').addEventListener('submit', function (event) {
+    event.preventDefault(); // Prevent the default form submission behavior
+
+    const message = document.getElementById('m').value;
+
+    socket.emit('chat message', message);
+
+  
+    document.getElementById('m').value = '';
+
+    return false;
+  });
+});
+
+  </script>
+</body>
+</html>
+
